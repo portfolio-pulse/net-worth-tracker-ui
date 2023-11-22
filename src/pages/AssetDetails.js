@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
+import AssetForm from "../components/AssetForm";
+
 export default function AssetDetails() {
     const columns = [
         {
@@ -79,7 +81,7 @@ export default function AssetDetails() {
     return (
         <React.Fragment>
             <h1>Asset List</h1>
-
+            <AssetForm></AssetForm>
             <DataTable
                 customStyles={tableHeaderstyle}
                 columns={columns}
