@@ -8,7 +8,12 @@ export default function AssetForm() {
     const [amount, setAmountValue] = useState('');
     const [interestRate, setInterestRate] = useState('');
     const [interestFrequency, setInterestFrequency] = useState('');
-    //setInterestFrequency
+    const [userId, setUserId] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [maturityDate, setMaturityDate] = useState('');
+    const [asOfDate, setAsOfDate] = useState('');
+    const [remarks, setRemarks] = useState('');
+    //setRemarks
 
     // Sample dropdown options
     const dropdownOptions = ['Option 1', 'Option 2', 'Option 3'];
@@ -38,7 +43,25 @@ export default function AssetForm() {
         setInterestFrequency(e.target.value);
     };
 
-    //interestRateChange
+    const userIdChange = (e) => {
+        setUserId(e.target.value);
+    };
+    const startDateChange = (e) => {
+        setStartDate(e.target.value);
+    };
+
+    const maturityDateChange = (e) => {
+        setMaturityDate(e.target.value);
+    };
+
+    const asOfDateChange = (e) => {
+        setAsOfDate(e.target.value);
+    };
+
+    const remarksChange = (e) => {
+        setRemarks(e.target.value);
+    };
+    //remarksChange
 
     // Form submission handler (you can customize this)
     const handleSubmit = (e) => {
@@ -48,6 +71,7 @@ export default function AssetForm() {
         //console.log('Date:', dateValue);
         console.log('InvestmentType:', investmentType);
         console.log('Amount:', amount);
+        console.log('User', userId);
     };
 
     return (
@@ -83,12 +107,31 @@ export default function AssetForm() {
                 Interest Frequency :
                 <input type="text" value={interestFrequency} onChange={interestFrequencyChange} />
             </label>
-            {/* <label>
-        Date:
-        <input type="date" value={dateValue} onChange={handleDateChange} />
-      </label>
-      <br /> */}
-
+            <br/>
+            <label>
+                User Id :
+                <input type="text" value={userId} onChange={userIdChange} />
+            </label>
+            <br/>
+            <label>
+                Start Date:
+                <input type="date" value={startDate} onChange={startDateChange} />
+            </label>
+            <br />
+            <label>
+                Maturity Date:
+                <input type="date" value={maturityDate} onChange={maturityDateChange} />
+            </label>
+            <br/>
+            <label>
+                As Of Date:
+                <input type="date" value={asOfDate} onChange={asOfDateChange} />
+            </label>
+            <br/>
+            <label>
+                Remarks:
+                <input type="text" value={remarks} onChange={remarksChange} />
+            </label>
 
             <br />
 
