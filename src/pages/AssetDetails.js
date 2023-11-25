@@ -1,12 +1,19 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import AssetForm from "../components/AssetForm";
+import axios from "axios";
 
 export default function AssetDetails() {
     const columns = [
         {
-            name: "Sr.No",
-            selector: (row) => row.id,
+            name: "Select",
+            cell: (row) => (
+                <button className="btn btn-danger" onClick={() => handleSelect(row.assetDetailId)}>Select</button>
+            )
+        },
+        {
+            name: "Asset Id",
+            selector: (row) => row.assetDetailId,
         },
         {
             name: "Investment Entity",
@@ -33,6 +40,8 @@ export default function AssetDetails() {
     const [data, setData] = useState([]);
     const [search, SetSearch] = useState('');
     const [filter, setFilter] = useState([]);
+    const [asset, setAssetData] = useState({});
+    const [textboxValue, setTextboxValue] = useState('');
 
     const getProduct = async () => {
         try {
@@ -56,9 +65,30 @@ export default function AssetDetails() {
         setFilter(result);
     }, [search]);
 
-    const handleDelete = (val) => {
-        const newdata = data.filter((item) => item.id !== val);
-        setFilter(newdata);
+    const handleSelect =  (assetId) => {
+        // const newdata = data.filter((item) => item.id !== val);
+        // setFilter(newdata);
+        console.log(assetId);
+        fetchAsset(assetId);
+        setTextboxValue('New value from parent');
+    }
+
+    // useEffect(()=>{
+    //     console.log(asset.amount);
+    // },[asset]);
+
+    const fetchAsset = async (assetId) => {
+        try {
+            const response = await axios.get("http://localhost:5226/api/General/GetAssetDetailById", {
+                params: {
+                    assetDetailId: assetId
+                }
+            });
+            setAssetData(response.data);         
+        }
+        catch (error) {
+            console.error("error:", error);
+        }
     }
 
     const tableHeaderstyle = {
@@ -72,16 +102,11 @@ export default function AssetDetails() {
         },
     }
 
-    // const { register, handleSubmit, formState: { errors } } = useForm();
-
-    // const onSubmit = (data) => {
-    //     console.log(data);
-    // };
-
     return (
         <React.Fragment>
             <h1>Asset List</h1>
-            <AssetForm></AssetForm>
+
+            <AssetForm textboxValue={textboxValue} setTextboxValue={setTextboxValue}></AssetForm>
             <DataTable
                 customStyles={tableHeaderstyle}
                 columns={columns}

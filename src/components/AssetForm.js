@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function AssetForm() {
+export default function AssetForm(props) {
+
+    
     // State variables for form fields
     const [investmentEntity, setInvestmentEntityValue] = useState('');
     const [investmentType, setinvestmentTypeValue] = useState('');
@@ -15,6 +17,8 @@ export default function AssetForm() {
     const [remarks, setRemarks] = useState('');
     const [investmentTypeData, setInvestmentTypeData] = useState([]);
     const [usersData, setUsersData] = useState([]);
+
+
 
     const [postData, setPostData] = useState({
         "AssetDetailId": '',
@@ -37,16 +41,19 @@ export default function AssetForm() {
         setAsOfDate(defaultDate);
 
         //api to populate users
-        
         fetchUsers();
     }, []);
 
+    // if (props.passedData != undefined) {
+    //     console.log(props.passedData.amount);
+    //     setPostData(props.passedData);
+    // }
 
     // Sample dropdown options
     const dropdownOptions = ['Option 1', 'Option 2', 'Option 3'];
 
     const fetchUsers = async () => {
-        try {          
+        try {
             const response = await axios.get("http://localhost:5226/api/General/GetMasterData");
             setInvestmentTypeData(response.data.investmentTypes);
             setUsersData(response.data.users);
@@ -58,6 +65,7 @@ export default function AssetForm() {
     }
     //
     const handleAsOfDateChange = (e) => {
+
         setAsOfDate(e.target.value);
         setPostData({
             ...postData,
@@ -66,6 +74,8 @@ export default function AssetForm() {
     };
     // Event handlers for form fields
     const handleInputChange = (e) => {
+        setPostData(props.setTextboxValue(e.target.value));
+        
 
         setPostData({
             ...postData,
@@ -82,7 +92,7 @@ export default function AssetForm() {
             alert("Please select user");
             return false;
         }
-        postData.UserId=parseInt(postData.UserId);
+        postData.UserId = parseInt(postData.UserId);
         postData.AssetDetailId = 0;
         postData.InvestmentTypeId = 0;
         postData.AsOfDate = asOfDate;
@@ -97,6 +107,7 @@ export default function AssetForm() {
 
     return (
         <form onSubmit={handleSubmit}>
+            <input type="text" value={props.textboxValue} onChange={handleInputChange} />
             <label>
                 Investment Entity:
                 <input type="text" name="InvestmentEntity" value={postData.investmentEntity} onChange={handleInputChange} />
