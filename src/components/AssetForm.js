@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 export default function AssetForm() {
     // State variables for form fields
     const [investmentEntity, setInvestmentEntityValue] = useState('');
-    //const [dateValue, setDateValue] = useState('');
     const [investmentType, setinvestmentTypeValue] = useState('');
     const [amount, setAmountValue] = useState('');
     const [interestRate, setInterestRate] = useState('');
@@ -13,81 +13,102 @@ export default function AssetForm() {
     const [maturityDate, setMaturityDate] = useState('');
     const [asOfDate, setAsOfDate] = useState('');
     const [remarks, setRemarks] = useState('');
-    //setRemarks
+    const [investmentTypeData, setInvestmentTypeData] = useState([]);
+    const [usersData, setUsersData] = useState([]);
+
+    const [postData, setPostData] = useState({
+        "AssetDetailId": '',
+        "InvestmentEntity": '',
+        "InvestmentTypeId": '',
+        "Amount": '',
+        "InterestRate": '',
+        "InterestFrequency": '',
+        "UserId": '',
+        "StartDate": '',
+        "MaturityDate": '',
+        "AsOfDate": '',
+        "Remarks": '',
+    });
+
+    useEffect(() => {
+        const today = new Date();
+        const defaultDate = today.toISOString().substr(0, 10);
+        console.log(defaultDate);
+        setAsOfDate(defaultDate);
+
+        //api to populate users
+        
+        fetchUsers();
+    }, []);
+
 
     // Sample dropdown options
     const dropdownOptions = ['Option 1', 'Option 2', 'Option 3'];
 
-    // Event handlers for form fields
-    const investmentEntityChange = (e) => {
-        setInvestmentEntityValue(e.target.value);
-    };
-
-    //   const handleDateChange = (e) => {
-    //     setDateValue(e.target.value);
-    //   };
-
-    const investmentTypeChange = (e) => {
-        setinvestmentTypeValue(e.target.value);
-    };
-
-    const amountChange = (e) => {
-        setAmountValue(e.target.value);
-    };
-
-    const interestRateChange = (e) => {
-        setInterestRate(e.target.value);
-    };
-
-    const interestFrequencyChange = (e) => {
-        setInterestFrequency(e.target.value);
-    };
-
-    const userIdChange = (e) => {
-        setUserId(e.target.value);
-    };
-    const startDateChange = (e) => {
-        setStartDate(e.target.value);
-    };
-
-    const maturityDateChange = (e) => {
-        setMaturityDate(e.target.value);
-    };
-
-    const asOfDateChange = (e) => {
+    const fetchUsers = async () => {
+        try {          
+            const response = await axios.get("http://localhost:5226/api/General/GetMasterData");
+            setInvestmentTypeData(response.data.investmentTypes);
+            setUsersData(response.data.users);
+            console.log(response);
+        }
+        catch (error) {
+            console.error("error:", error);
+        }
+    }
+    //
+    const handleAsOfDateChange = (e) => {
         setAsOfDate(e.target.value);
+        setPostData({
+            ...postData,
+            "AsOfDate": e.target.value,
+        });
+    };
+    // Event handlers for form fields
+    const handleInputChange = (e) => {
+
+        setPostData({
+            ...postData,
+            [e.target.name]: e.target.type === 'number' ? parseFloat(e.target.value) : e.target.value,
+        });
     };
 
-    const remarksChange = (e) => {
-        setRemarks(e.target.value);
-    };
-    //remarksChange
+
 
     // Form submission handler (you can customize this)
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Add your form submission logic here
-        console.log('InvestmentEntity:', investmentEntity);
-        //console.log('Date:', dateValue);
-        console.log('InvestmentType:', investmentType);
-        console.log('Amount:', amount);
-        console.log('User', userId);
+        if (postData.UserId == "") {
+            alert("Please select user");
+            return false;
+        }
+        postData.UserId=parseInt(postData.UserId);
+        postData.AssetDetailId = 0;
+        postData.InvestmentTypeId = 0;
+        postData.AsOfDate = asOfDate;
+        axios.post("http://localhost:5226/api/General/AddUpdateAssetDetails", postData)
+            .then(response => {
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.error("Error: ", error);
+            });
     };
 
     return (
         <form onSubmit={handleSubmit}>
             <label>
                 Investment Entity:
-                <input type="text" value={investmentEntity} onChange={investmentEntityChange} />
+                <input type="text" name="InvestmentEntity" value={postData.investmentEntity} onChange={handleInputChange} />
             </label>
             <br />
             <label>
                 Investment Type:
-                <select value={investmentType} onChange={investmentTypeChange}>
+                <select name="InvestmentTypeId" value={postData.InvestmentTypeId} onChange={handleInputChange}>
                     <option value="">Select an option</option>
-                    {dropdownOptions.map((option) => (
-                        <option key={option} value={option}>
-                            {option}
+                    {investmentTypeData.map((option) => (
+                        <option key={option.investmentTypeId} value={option.investmentTypeId}>
+                            {option.investmentType}
                         </option>
                     ))}
                 </select>
@@ -95,42 +116,50 @@ export default function AssetForm() {
             <br />
             <label>
                 Amount :
-                <input type="text" value={amount} onChange={amountChange} />
+                <input type="number" name="Amount" value={postData.Amount} onChange={handleInputChange} />
             </label>
             <br />
             <label>
                 Interest Rate :
-                <input type="text" value={interestRate} onChange={interestRateChange} />
+                <input type="number" name="InterestRate" value={postData.InterestRate} onChange={handleInputChange} />
             </label>
             <br />
             <label>
                 Interest Frequency :
-                <input type="text" value={interestFrequency} onChange={interestFrequencyChange} />
+                <input type="text" name="InterestFrequency" value={postData.InterestFrequency} onChange={handleInputChange} />
             </label>
-            <br/>
+            <br />
             <label>
                 User Id :
-                <input type="text" value={userId} onChange={userIdChange} />
+                <select name="UserId" value={postData.UserId} onChange={handleInputChange}>
+                    <option value="">Select an option</option>
+                    {usersData.map((option) => (
+                        <option key={option.userId} value={option.userId}>
+                            {option.userName}
+                        </option>
+                    ))}
+                </select>
+                {/* <input type="number" name="UserId" value={postData.UserId} onChange={handleInputChange} /> */}
             </label>
-            <br/>
+            <br />
             <label>
                 Start Date:
-                <input type="date" value={startDate} onChange={startDateChange} />
+                <input type="date" name="StartDate" value={postData.StartDate} onChange={handleInputChange} />
             </label>
             <br />
             <label>
                 Maturity Date:
-                <input type="date" value={maturityDate} onChange={maturityDateChange} />
+                <input type="date" name="MaturityDate" value={postData.MaturityDate} onChange={handleInputChange} />
             </label>
-            <br/>
+            <br />
             <label>
                 As Of Date:
-                <input type="date" value={asOfDate} onChange={asOfDateChange} />
+                <input type="date" name="AsOfDate" value={asOfDate} onChange={handleAsOfDateChange} />
             </label>
-            <br/>
+            <br />
             <label>
                 Remarks:
-                <input type="text" value={remarks} onChange={remarksChange} />
+                <input type="text" name="Remarks" value={postData.Remarks} onChange={handleInputChange} />
             </label>
 
             <br />
