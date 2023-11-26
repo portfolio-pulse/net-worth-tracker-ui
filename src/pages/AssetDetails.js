@@ -41,7 +41,6 @@ export default function AssetDetails() {
     const [search, SetSearch] = useState('');
     const [filter, setFilter] = useState([]);
     const [asset, setAssetData] = useState({});
-    const [textboxValue, setTextboxValue] = useState('');
 
     const getProduct = async () => {
         try {
@@ -70,7 +69,6 @@ export default function AssetDetails() {
         // setFilter(newdata);
         console.log(assetId);
         fetchAsset(assetId);
-        setTextboxValue('New value from parent');
     }
 
     // useEffect(()=>{
@@ -106,7 +104,7 @@ export default function AssetDetails() {
         <React.Fragment>
             <h1>Asset List</h1>
 
-            <AssetForm textboxValue={textboxValue} setTextboxValue={setTextboxValue}></AssetForm>
+            <AssetForm passedData={asset}></AssetForm>
             <DataTable
                 customStyles={tableHeaderstyle}
                 columns={columns}
