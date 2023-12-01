@@ -5,6 +5,7 @@ export default function AssetForm(asset) {
 
 
     // State variables for form fields
+    const [investmentId, setInvestmentId] = useState(0);
     const [investmentEntity, setInvestmentEntityValue] = useState('');
     const [investmentType, setinvestmentTypeValue] = useState('');
     const [amount, setAmountValue] = useState('');
@@ -17,6 +18,7 @@ export default function AssetForm(asset) {
     const [remarks, setRemarks] = useState('');
     const [investmentTypeData, setInvestmentTypeData] = useState([]);
     const [usersData, setUsersData] = useState([]);
+    const [isSubmitClicked, setSubmitClicked] = useState(false);
 
 
     const [postData, setPostData] = useState({
@@ -35,41 +37,57 @@ export default function AssetForm(asset) {
 
 
     useEffect(() => {
-        const onLoad=async()=>{
-            const today = new Date();
-            const defaultDate = today.toISOString().substr(0, 10);
-            console.log(defaultDate);
-            setAsOfDate(defaultDate);
-    
+        const onLoad = async () => {
+
+
             //api to populate users
             await fetchUsers();
             if (asset && asset.passedData.amount) {
                 console.log("Assets passed from parent: ", asset.passedData.amount);
+                setInvestmentId(asset.passedData.assetDetailId);
                 setInvestmentEntityValue(asset.passedData.investmentEntity);
                 setinvestmentTypeValue(asset.passedData.investmentTypeId);
                 setAmountValue(asset.passedData.amount);
                 setInterestRate(asset.passedData.interestRate);
                 setInterestFrequency(asset.passedData.interestFrequency);
                 setUserId(asset.passedData.userId);
-                setStartDate(asset.passedData.startDate);
-                setMaturityDate(asset.passedData.maturityDate);
-                setAsOfDate(asset.passedData.asOfDate);
+
+                setStartDate(convertUtcToYYYYMMDD(asset.passedData.startDate));
+
+                setMaturityDate(convertUtcToYYYYMMDD(asset.passedData.maturityDate));
+
+                setAsOfDate(convertUtcToYYYYMMDD(asset.passedData.asOfDate));
                 setRemarks(asset.passedData.remarks);
             }
-    
-            if (postData.UserId != "") {
-                await axios.post("http://localhost:5226/api/General/AddUpdateAssetDetails", postData)
-                    .then(response => {
-                        console.log(response.data);
-                    })
-                    .catch(error => {
-                        console.error("Error: ", error);
-                    });
+            else {
+                const today = new Date();
+                const defaultDate = today.toISOString().substr(0, 10);
+                setAsOfDate(defaultDate);
+            }
+
+            if (isSubmitClicked) {
+                if (postData.UserId != "") {
+                    await axios.post("http://localhost:5226/api/General/AddUpdateAssetDetails", postData)
+                        .then(response => {
+                            console.log(response.data);
+                        })
+                        .catch(error => {
+                            console.error("Error: ", error);
+                        });
+                }
+                setSubmitClicked(false);
             }
         };
         onLoad();
-    }, [postData, asset]);
+    }, [postData, asset, isSubmitClicked]);
 
+    const convertUtcToYYYYMMDD = (utcDate) => {
+        const dateObject = new Date(utcDate);
+        const year = dateObject.getUTCFullYear();
+        const month = `0${dateObject.getUTCMonth() + 1}`.slice(-2);
+        const day = `0${dateObject.getUTCDate()}`.slice(-2);
+        return `${year}-${month}-${day}`;
+    };
     // Sample dropdown options
     const dropdownOptions = ['Option 1', 'Option 2', 'Option 3'];
 
@@ -89,21 +107,14 @@ export default function AssetForm(asset) {
 
         setAsOfDate(e.target.value);
 
-        setPostData({
-            ...postData,
-            "AsOfDate": e.target.value,
-        });
     };
 
+    const handleInvestmentId = (e) => {
+        setInvestmentId(e.target.value);
+    };
     // Event handlers for form fields
     const handleInvestmentEntity = (e) => {
         setInvestmentEntityValue(e.target.value);
-        //setinvestmentTypeValue(e.target.value);
-
-        // setPostData({
-        //     ...postData,
-        //     [e.target.name]: e.target.type === 'number' ? parseFloat(e.target.value) : e.target.value,
-        // });
     };
     const handleInvestmentType = (e) => {
         setinvestmentTypeValue(e.target.value);
@@ -137,9 +148,12 @@ export default function AssetForm(asset) {
     // Form submission handler (you can customize this)
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setPostData(postData => ({
-            ...postData,
-            "AssetDetailId": 0,
+        
+        if (investmentId == "") {
+            setInvestmentId(0);
+        }
+        setPostData({
+            "AssetDetailId": investmentId,
             "InvestmentEntity": investmentEntity,
             "InvestmentTypeId": investmentType,
             "Amount": amount,
@@ -150,23 +164,15 @@ export default function AssetForm(asset) {
             "MaturityDate": maturityDate,
             "AsOfDate": asOfDate,
             "Remarks": remarks
-        }));
-
-        // if (postData.UserId == "") {
-        //     alert("Please select user");
-        //     return false;
-        // }
-        // await axios.post("http://localhost:5226/api/General/AddUpdateAssetDetails", postData)
-        //     .then(response => {
-        //         console.log(response.data);
-        //     })
-        //     .catch(error => {
-        //         console.error("Error: ", error);
-        //     });
+        });
+        setSubmitClicked(true);
     };
 
     return (
         <form onSubmit={handleSubmit}>
+            <label>
+                <input type="number" name="InvestmentId" value={investmentId} onChange={handleInvestmentId} />
+            </label>
             <label>
                 Investment Entity:
                 <input type="text" name="InvestmentEntity" value={investmentEntity} onChange={handleInvestmentEntity} />
