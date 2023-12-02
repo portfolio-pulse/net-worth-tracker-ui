@@ -12,6 +12,12 @@ export default function AssetDetails() {
             )
         },
         {
+            name: "Delete",
+            cell: (row) => (
+                <button className="btn btn-danger" onClick={() => handleDelete(row.assetDetailId)}>Delete</button>
+            )
+        },
+        {
             name: "Asset Id",
             selector: (row) => row.assetDetailId,
         },
@@ -41,6 +47,7 @@ export default function AssetDetails() {
     const [search, SetSearch] = useState('');
     const [filter, setFilter] = useState([]);
     const [asset, setAssetData] = useState({});
+    const [refreshAssets, setRefreshAssets] = useState(true);
 
     const getProduct = async () => {
         try {
@@ -54,6 +61,9 @@ export default function AssetDetails() {
         }
     }
     useEffect(() => {
+        // if (refreshAssets) {
+        //     getProduct();
+        // }
         getProduct();
     }, []);
 
@@ -64,16 +74,17 @@ export default function AssetDetails() {
         setFilter(result);
     }, [search]);
 
-    const handleSelect =  (assetId) => {
-        // const newdata = data.filter((item) => item.id !== val);
-        // setFilter(newdata);
+    const handleSelect = async (assetId) => {
         console.log(assetId);
         fetchAsset(assetId);
     }
-
-    // useEffect(()=>{
-    //     console.log(asset.amount);
-    // },[asset]);
+    //handleDelete(row.assetDetailId)
+    const handleDelete = async (assetId) => {
+        console.log(assetId);
+        await deleteAsset(assetId);
+        //setRefreshAssets(true);
+        await getProduct();
+    }
 
     const fetchAsset = async (assetId) => {
         try {
@@ -82,12 +93,28 @@ export default function AssetDetails() {
                     assetDetailId: assetId
                 }
             });
-            setAssetData(response.data);         
+            setAssetData(response.data);
         }
         catch (error) {
             console.error("error:", error);
         }
-    }
+    };
+
+    const deleteAsset = async (assetId) => {
+        try {
+            const response = await axios.get("http://localhost:5226/api/General/DeleteAssetById", {
+                params: {
+                    assetDetailId: assetId
+                }
+            });
+            if (response.data > 0) {
+                alert("Asset deleted successfully");
+            }
+        }
+        catch (error) {
+            console.error("Error: ", error);
+        }
+    };
 
     const tableHeaderstyle = {
         headCells: {

@@ -12,9 +12,9 @@ export default function AssetForm(asset) {
     const [interestRate, setInterestRate] = useState('');
     const [interestFrequency, setInterestFrequency] = useState('');
     const [userId, setUserId] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [maturityDate, setMaturityDate] = useState('');
-    const [asOfDate, setAsOfDate] = useState('');
+    const [startDate, setStartDate] = useState(null);
+    const [maturityDate, setMaturityDate] = useState(null);
+    const [asOfDate, setAsOfDate] = useState(null);
     const [remarks, setRemarks] = useState('');
     const [investmentTypeData, setInvestmentTypeData] = useState([]);
     const [usersData, setUsersData] = useState([]);
@@ -38,8 +38,6 @@ export default function AssetForm(asset) {
 
     useEffect(() => {
         const onLoad = async () => {
-
-
             //api to populate users
             await fetchUsers();
             if (asset && asset.passedData.amount) {
@@ -51,11 +49,8 @@ export default function AssetForm(asset) {
                 setInterestRate(asset.passedData.interestRate);
                 setInterestFrequency(asset.passedData.interestFrequency);
                 setUserId(asset.passedData.userId);
-
                 setStartDate(convertUtcToYYYYMMDD(asset.passedData.startDate));
-
                 setMaturityDate(convertUtcToYYYYMMDD(asset.passedData.maturityDate));
-
                 setAsOfDate(convertUtcToYYYYMMDD(asset.passedData.asOfDate));
                 setRemarks(asset.passedData.remarks);
             }
@@ -64,7 +59,12 @@ export default function AssetForm(asset) {
                 const defaultDate = today.toISOString().substr(0, 10);
                 setAsOfDate(defaultDate);
             }
+        };
+        onLoad();
+    }, [asset]);
 
+    useEffect(() => {
+        const onSubmit = async () => {
             if (isSubmitClicked) {
                 if (postData.UserId != "") {
                     await axios.post("http://localhost:5226/api/General/AddUpdateAssetDetails", postData)
@@ -78,8 +78,9 @@ export default function AssetForm(asset) {
                 setSubmitClicked(false);
             }
         };
-        onLoad();
-    }, [postData, asset, isSubmitClicked]);
+
+        onSubmit();
+    }, [isSubmitClicked, postData]);
 
     const convertUtcToYYYYMMDD = (utcDate) => {
         const dateObject = new Date(utcDate);
@@ -101,7 +102,7 @@ export default function AssetForm(asset) {
         catch (error) {
             console.error("error:", error);
         }
-    }
+    };
     //
     const handleAsOfDateChange = (e) => {
 
@@ -145,13 +146,40 @@ export default function AssetForm(asset) {
     };
 
 
+    const clear = async (e) => {
+        e.preventDefault();
+        const today = new Date();
+        const defaultDate = today.toISOString().substr(0, 10);
+
+        setInvestmentId(0);
+        setInvestmentEntityValue('');
+        setinvestmentTypeValue(0);
+        setAmountValue('');
+        setInterestRate('');
+        setInterestFrequency('');
+        setUserId(0);
+        setStartDate('');
+        setMaturityDate('');
+        setAsOfDate(defaultDate);
+        setRemarks('');
+    };
+
     // Form submission handler (you can customize this)
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (investmentId == "") {
             setInvestmentId(0);
         }
+        // if(startDate==""){
+        //     setStartDate(null);
+        // }
+        // if(maturityDate==""){
+        //     setMaturityDate(null);
+        // }
+        // if(asOfDate==""){
+        //     setAsOfDate(null);
+        // }
         setPostData({
             "AssetDetailId": investmentId,
             "InvestmentEntity": investmentEntity,
@@ -171,7 +199,7 @@ export default function AssetForm(asset) {
     return (
         <form onSubmit={handleSubmit}>
             <label>
-                <input type="number" name="InvestmentId" value={investmentId} onChange={handleInvestmentId} />
+                <input type="number" name="InvestmentId" hidden="true" value={investmentId} onChange={handleInvestmentId} />
             </label>
             <label>
                 Investment Entity:
@@ -181,7 +209,7 @@ export default function AssetForm(asset) {
             <label>
                 Investment Type:
                 <select name="InvestmentTypeId" value={investmentType} onChange={handleInvestmentType}>
-                    <option value="">Select an option</option>
+                    <option value="0">Select an option</option>
                     {investmentTypeData.map((option) => (
                         <option key={option.investmentTypeId} value={option.investmentTypeId}>
                             {option.investmentType}
@@ -208,7 +236,7 @@ export default function AssetForm(asset) {
             <label>
                 User Id :
                 <select name="UserId" value={userId} onChange={handleUser}>
-                    <option value="">Select an option</option>
+                    <option value="0">Select an option</option>
                     {usersData.map((option) => (
                         <option key={option.userId} value={option.userId}>
                             {option.userName}
@@ -239,7 +267,8 @@ export default function AssetForm(asset) {
 
             <br />
 
-            <button type="submit">Submit</button>
+            <button type="submit">Save</button>
+            <button onClick={clear}>Clear</button>
         </form>
     );
 };
