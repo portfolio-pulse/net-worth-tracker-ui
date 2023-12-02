@@ -47,36 +47,32 @@ export default function AssetDetails() {
     const [search, SetSearch] = useState('');
     const [filter, setFilter] = useState([]);
     const [asset, setAssetData] = useState({});
-    const [refreshAssets, setRefreshAssets] = useState(true);
+
+    
+
+    useEffect(() => {
+        const onLoad = async () => {
+            await getProduct();
+        };
+        onLoad();
+    }, []);
 
     const getProduct = async () => {
         try {
             //https://fakestoreapi.com/products
-            const req = await fetch("http://localhost:5226/api/General/GetAssetDetails");
-            const res = await req.json();
-            setData(res);
-            setFilter(res);
+            const response = await axios.get("http://localhost:5226/api/General/GetAssetDetails");
+            //const result = request.json();
+            //setData(res);
+            setFilter(response.data);
         } catch (error) {
             console.log(error);
         }
     }
-    useEffect(() => {
-        // if (refreshAssets) {
-        //     getProduct();
-        // }
-        getProduct();
-    }, []);
-
-    useEffect(() => {
-        const result = data.filter((item) => {
-            return item.title.toLowerCase().match(search.toLocaleLowerCase());
-        });
-        setFilter(result);
-    }, [search]);
 
     const handleSelect = async (assetId) => {
         console.log(assetId);
-        fetchAsset(assetId);
+        const selectedAsset = await fetchAsset(assetId);
+        setAssetData(selectedAsset);
     }
     //handleDelete(row.assetDetailId)
     const handleDelete = async (assetId) => {
@@ -86,6 +82,12 @@ export default function AssetDetails() {
         await getProduct();
     }
 
+    const handleButtonClick = async () => {
+        // Do something when the button is clicked
+        await getProduct();
+        console.log('Button clicked in form component');
+    };
+
     const fetchAsset = async (assetId) => {
         try {
             const response = await axios.get("http://localhost:5226/api/General/GetAssetDetailById", {
@@ -93,7 +95,8 @@ export default function AssetDetails() {
                     assetDetailId: assetId
                 }
             });
-            setAssetData(response.data);
+            //setAssetData(response.data);
+            return response.data;
         }
         catch (error) {
             console.error("error:", error);
@@ -131,7 +134,7 @@ export default function AssetDetails() {
         <React.Fragment>
             <h1>Asset List</h1>
 
-            <AssetForm passedData={asset}></AssetForm>
+            <AssetForm onButtonClick={handleButtonClick} passedData={asset}></AssetForm>
             <DataTable
                 customStyles={tableHeaderstyle}
                 columns={columns}

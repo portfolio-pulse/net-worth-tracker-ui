@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function AssetForm(asset) {
+export default function AssetForm({ onButtonClick, passedData }) {
 
 
     // State variables for form fields
@@ -40,19 +40,37 @@ export default function AssetForm(asset) {
         const onLoad = async () => {
             //api to populate users
             await fetchUsers();
-            if (asset && asset.passedData.amount) {
-                console.log("Assets passed from parent: ", asset.passedData.amount);
-                setInvestmentId(asset.passedData.assetDetailId);
-                setInvestmentEntityValue(asset.passedData.investmentEntity);
-                setinvestmentTypeValue(asset.passedData.investmentTypeId);
-                setAmountValue(asset.passedData.amount);
-                setInterestRate(asset.passedData.interestRate);
-                setInterestFrequency(asset.passedData.interestFrequency);
-                setUserId(asset.passedData.userId);
-                setStartDate(convertUtcToYYYYMMDD(asset.passedData.startDate));
-                setMaturityDate(convertUtcToYYYYMMDD(asset.passedData.maturityDate));
-                setAsOfDate(convertUtcToYYYYMMDD(asset.passedData.asOfDate));
-                setRemarks(asset.passedData.remarks);
+            if (passedData.amount != undefined) {
+                console.log("Assets passed from parent: ", passedData.amount);
+                setInvestmentId(passedData.assetDetailId);
+                setInvestmentEntityValue(passedData.investmentEntity);
+                setinvestmentTypeValue(passedData.investmentTypeId);
+                setAmountValue(passedData.amount);
+                setInterestRate(passedData.interestRate);
+                setInterestFrequency(passedData.interestFrequency);
+                setUserId(passedData.userId);
+                if (passedData.startDate != null) {
+                    setStartDate(convertUtcToYYYYMMDD(passedData.startDate));
+                }
+                else {
+                    setStartDate('');
+                }
+
+                if (passedData.maturityDate != null) {
+                    setMaturityDate(convertUtcToYYYYMMDD(passedData.maturityDate));
+                }
+                else {
+                    setMaturityDate('');
+                }
+
+                if (passedData.asOfDate != null) {
+                    setAsOfDate(convertUtcToYYYYMMDD(passedData.asOfDate));
+                }
+                else {
+                    setAsOfDate('');
+                }
+
+                setRemarks(passedData.remarks);
             }
             else {
                 const today = new Date();
@@ -61,7 +79,7 @@ export default function AssetForm(asset) {
             }
         };
         onLoad();
-    }, [asset]);
+    }, [passedData]);
 
     useEffect(() => {
         const onSubmit = async () => {
@@ -74,6 +92,7 @@ export default function AssetForm(asset) {
                         .catch(error => {
                             console.error("Error: ", error);
                         });
+                    await onButtonClick();
                 }
                 setSubmitClicked(false);
             }
@@ -89,8 +108,7 @@ export default function AssetForm(asset) {
         const day = `0${dateObject.getUTCDate()}`.slice(-2);
         return `${year}-${month}-${day}`;
     };
-    // Sample dropdown options
-    const dropdownOptions = ['Option 1', 'Option 2', 'Option 3'];
+
 
     const fetchUsers = async () => {
         try {
@@ -136,10 +154,10 @@ export default function AssetForm(asset) {
         setStartDate(e.target.value);
     };
     const handleMaturityDate = (e) => {
-        setMaturityDate(e.target.value);
+        setMaturityDate(e.target.value || null);
     };
     const handleAsOfDate = (e) => {
-        setAsOfDate(e.target.value);
+        setAsOfDate(e.target.value || null);
     };
     const handleRemarks = (e) => {
         setRemarks(e.target.value);
@@ -158,8 +176,8 @@ export default function AssetForm(asset) {
         setInterestRate('');
         setInterestFrequency('');
         setUserId(0);
-        setStartDate('');
-        setMaturityDate('');
+        setStartDate(null);
+        setMaturityDate(null);
         setAsOfDate(defaultDate);
         setRemarks('');
     };
@@ -171,14 +189,14 @@ export default function AssetForm(asset) {
         if (investmentId == "") {
             setInvestmentId(0);
         }
-        // if(startDate==""){
-        //     setStartDate(null);
+        // if(startDate===null || startDate===""){
+        //     setStartDate('');
         // }
-        // if(maturityDate==""){
-        //     setMaturityDate(null);
+        // if(maturityDate===null || maturityDate===""){
+        //     setMaturityDate('');
         // }
-        // if(asOfDate==""){
-        //     setAsOfDate(null);
+        // if(asOfDate===null || asOfDate===""){
+        //     setAsOfDate('');
         // }
         setPostData({
             "AssetDetailId": investmentId,
@@ -188,9 +206,9 @@ export default function AssetForm(asset) {
             "InterestRate": interestRate,
             "InterestFrequency": interestFrequency,
             "UserId": userId,
-            "StartDate": startDate,
-            "MaturityDate": maturityDate,
-            "AsOfDate": asOfDate,
+            "StartDate": startDate==''?null:startDate,
+            "MaturityDate": maturityDate==''?null:maturityDate,
+            "AsOfDate": asOfDate==''?null:asOfDate,
             "Remarks": remarks
         });
         setSubmitClicked(true);
