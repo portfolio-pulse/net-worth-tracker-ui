@@ -40,45 +40,47 @@ export default function AssetForm({ onButtonClick, passedData }) {
         const onLoad = async () => {
             //api to populate users
             await fetchUsers();
-            if (passedData.amount != undefined) {
-                console.log("Assets passed from parent: ", passedData.amount);
-                setInvestmentId(passedData.assetDetailId);
-                setInvestmentEntityValue(passedData.investmentEntity);
-                setinvestmentTypeValue(passedData.investmentTypeId);
-                setAmountValue(passedData.amount);
-                setInterestRate(passedData.interestRate);
-                setInterestFrequency(passedData.interestFrequency);
-                setUserId(passedData.userId);
-                if (passedData.startDate != null) {
-                    setStartDate(convertUtcToYYYYMMDD(passedData.startDate));
-                }
-                else {
-                    setStartDate('');
-                }
-
-                if (passedData.maturityDate != null) {
-                    setMaturityDate(convertUtcToYYYYMMDD(passedData.maturityDate));
-                }
-                else {
-                    setMaturityDate('');
-                }
-
-                if (passedData.asOfDate != null) {
-                    setAsOfDate(convertUtcToYYYYMMDD(passedData.asOfDate));
-                }
-                else {
-                    setAsOfDate('');
-                }
-
-                setRemarks(passedData.remarks);
-            }
-            else {
-                const today = new Date();
-                const defaultDate = today.toISOString().substr(0, 10);
-                setAsOfDate(defaultDate);
-            }
+            const today = new Date();
+            const defaultDate = today.toISOString().substr(0, 10);
+            setAsOfDate(defaultDate);
         };
         onLoad();
+    }, []);
+
+    useEffect(() => {
+        if (passedData.amount != undefined) {
+            console.log("Assets passed from parent: ", passedData.amount);
+            setInvestmentId(passedData.assetDetailId);
+            setInvestmentEntityValue(passedData.investmentEntity);
+            setinvestmentTypeValue(passedData.investmentTypeId);
+            setAmountValue(passedData.amount);
+            setInterestRate(passedData.interestRate);
+            setInterestFrequency(passedData.interestFrequency);
+            setUserId(passedData.userId);
+            if (passedData.startDate != null) {
+                setStartDate(convertUtcToYYYYMMDD(passedData.startDate));
+            }
+            else {
+                setStartDate('');
+            }
+
+            if (passedData.maturityDate != null) {
+                setMaturityDate(convertUtcToYYYYMMDD(passedData.maturityDate));
+            }
+            else {
+                setMaturityDate('');
+            }
+
+            if (passedData.asOfDate != null) {
+                setAsOfDate(convertUtcToYYYYMMDD(passedData.asOfDate));
+            }
+            else {
+                setAsOfDate('');
+            }
+
+            setRemarks(passedData.remarks);
+        }
+       
     }, [passedData]);
 
     useEffect(() => {
@@ -99,7 +101,7 @@ export default function AssetForm({ onButtonClick, passedData }) {
         };
 
         onSubmit();
-    }, [isSubmitClicked, postData]);
+    }, [isSubmitClicked]);
 
     const convertUtcToYYYYMMDD = (utcDate) => {
         const dateObject = new Date(utcDate);
@@ -206,9 +208,9 @@ export default function AssetForm({ onButtonClick, passedData }) {
             "InterestRate": interestRate,
             "InterestFrequency": interestFrequency,
             "UserId": userId,
-            "StartDate": startDate==''?null:startDate,
-            "MaturityDate": maturityDate==''?null:maturityDate,
-            "AsOfDate": asOfDate==''?null:asOfDate,
+            "StartDate": startDate == '' ? null : startDate,
+            "MaturityDate": maturityDate == '' ? null : maturityDate,
+            "AsOfDate": asOfDate == '' ? null : asOfDate,
             "Remarks": remarks
         });
         setSubmitClicked(true);

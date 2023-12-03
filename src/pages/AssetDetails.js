@@ -43,7 +43,7 @@ export default function AssetDetails() {
         }
 
     ];
-    const [data, setData] = useState([]);
+    //const [data, setData] = useState([]);
     const [search, SetSearch] = useState('');
     const [filter, setFilter] = useState([]);
     const [asset, setAssetData] = useState({});
@@ -52,6 +52,7 @@ export default function AssetDetails() {
 
     useEffect(() => {
         const onLoad = async () => {
+            console.log("asset details from useEffect");
             await getProduct();
         };
         onLoad();
@@ -59,10 +60,7 @@ export default function AssetDetails() {
 
     const getProduct = async () => {
         try {
-            //https://fakestoreapi.com/products
             const response = await axios.get("http://localhost:5226/api/General/GetAssetDetails");
-            //const result = request.json();
-            //setData(res);
             setFilter(response.data);
         } catch (error) {
             console.log(error);
@@ -79,11 +77,13 @@ export default function AssetDetails() {
         console.log(assetId);
         await deleteAsset(assetId);
         //setRefreshAssets(true);
+        console.log("asset details from handleDelete");
         await getProduct();
     }
 
     const handleButtonClick = async () => {
         // Do something when the button is clicked
+        console.log("asset details from handleButtonClick");
         await getProduct();
         console.log('Button clicked in form component');
     };
