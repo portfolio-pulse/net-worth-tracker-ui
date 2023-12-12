@@ -20,6 +20,15 @@ export default function AssetForm({ onButtonClick, passedData }) {
     const [usersData, setUsersData] = useState([]);
     const [isSubmitClicked, setSubmitClicked] = useState(false);
 
+    const [isFixedIncomeVisible, setIsFixedIncomeVisible] = useState(true);
+    const [dictionary, setDictionary] = useState({});
+    const addDictionary = (investmentTypeId, assetClassId) => {
+        setDictionary((prevDictionary) => ({
+            ...prevDictionary,
+            [investmentTypeId]: assetClassId,
+        }));
+    };
+
 
     const [postData, setPostData] = useState({
         "AssetDetailId": '',
@@ -80,7 +89,7 @@ export default function AssetForm({ onButtonClick, passedData }) {
 
             setRemarks(passedData.remarks);
         }
-       
+
     }, [passedData]);
 
     useEffect(() => {
@@ -103,6 +112,16 @@ export default function AssetForm({ onButtonClick, passedData }) {
         onSubmit();
     }, [isSubmitClicked]);
 
+    // useEffect(() => {
+    //     const investmentTypeChange = async () => {
+    //         if (isFixedIncomeVisible) {
+    //             alert("Fixed income");
+    //         }
+    //     };
+
+    //     investmentTypeChange();
+    // }, [isFixedIncomeVisible]);
+
     const convertUtcToYYYYMMDD = (utcDate) => {
         const dateObject = new Date(utcDate);
         const year = dateObject.getUTCFullYear();
@@ -117,7 +136,13 @@ export default function AssetForm({ onButtonClick, passedData }) {
             const response = await axios.get("http://localhost:5226/api/General/GetMasterData");
             setInvestmentTypeData(response.data.investmentTypes);
             setUsersData(response.data.users);
-            console.log(response);
+
+            response.data.investmentTypes.forEach((type, index) => {
+                addDictionary(type.investmentTypeId, type.assetClassId);
+            });
+
+
+            //console.log(response);
         }
         catch (error) {
             console.error("error:", error);
@@ -139,6 +164,12 @@ export default function AssetForm({ onButtonClick, passedData }) {
     };
     const handleInvestmentType = (e) => {
         setinvestmentTypeValue(e.target.value);
+        if (dictionary[e.target.value] == 2) { //fixed income instruments
+            setIsFixedIncomeVisible(true);
+        }
+        else {
+            setIsFixedIncomeVisible(false);
+        }
     };
     const handleAmount = (e) => {
         setAmountValue(e.target.value);
@@ -265,20 +296,23 @@ export default function AssetForm({ onButtonClick, passedData }) {
                 </select>
             </label>
             <br />
-            <label>
-                Start Date:
-                <input type="date" name="StartDate" value={startDate} onChange={handleStartDate} />
-            </label>
+            {isFixedIncomeVisible &&
+                <label>
+                    Start Date:
+                    <input type="date" name="StartDate" value={startDate} onChange={handleStartDate} />
+                </label>}
             <br />
-            <label>
-                Maturity Date:
-                <input type="date" name="MaturityDate" value={maturityDate} onChange={handleMaturityDate} />
-            </label>
+            {isFixedIncomeVisible &&
+                <label>
+                    Maturity Date:
+                    <input type="date" name="MaturityDate" value={maturityDate} onChange={handleMaturityDate} />
+                </label>}
             <br />
-            <label>
-                As Of Date:
-                <input type="date" name="AsOfDate" value={asOfDate} onChange={handleAsOfDate} />
-            </label>
+            {!isFixedIncomeVisible &&
+                <label>
+                    As Of Date:
+                    <input type="date" name="AsOfDate" value={asOfDate} onChange={handleAsOfDate} />
+                </label>}
             <br />
             <label>
                 Remarks:
