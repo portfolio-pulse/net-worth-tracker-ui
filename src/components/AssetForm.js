@@ -58,7 +58,8 @@ export default function AssetForm({ onButtonClick, passedData }) {
 
     useEffect(() => {
         if (passedData.amount != undefined) {
-            console.log("Assets passed from parent: ", passedData.amount);
+            //console.log("Assets passed from parent: ", passedData.amount);
+            console.log("Assets passed from parent: ", passedData);
             setInvestmentId(passedData.assetDetailId);
             setInvestmentEntityValue(passedData.investmentEntity);
             setinvestmentTypeValue(passedData.investmentTypeId);
@@ -66,22 +67,28 @@ export default function AssetForm({ onButtonClick, passedData }) {
             setInterestRate(passedData.interestRate);
             setInterestFrequency(passedData.interestFrequency);
             setUserId(passedData.userId);
+            if (passedData.assetClassId == 2) { //fixed income
+                setIsFixedIncomeVisible(true);
+            }
+            else{
+                setIsFixedIncomeVisible(false);
+            }
             if (passedData.startDate != null) {
-                setStartDate(convertUtcToYYYYMMDD(passedData.startDate));
+                setStartDate(passedData.startDate.split("T")[0]);
             }
             else {
                 setStartDate('');
             }
 
             if (passedData.maturityDate != null) {
-                setMaturityDate(convertUtcToYYYYMMDD(passedData.maturityDate));
+                setMaturityDate(passedData.maturityDate.split("T")[0]);
             }
             else {
                 setMaturityDate('');
             }
 
             if (passedData.asOfDate != null) {
-                setAsOfDate(convertUtcToYYYYMMDD(passedData.asOfDate));
+                setAsOfDate(passedData.asOfDate.split("T")[0]);
             }
             else {
                 setAsOfDate('');
@@ -99,9 +106,13 @@ export default function AssetForm({ onButtonClick, passedData }) {
                     await axios.post("http://localhost:5226/api/General/AddUpdateAssetDetails", postData)
                         .then(response => {
                             console.log(response.data);
+                            if(response.data!=null){
+                                alert("Sucess");
+                            }
                         })
                         .catch(error => {
                             console.error("Error: ", error);
+                            alert("Operation failed!!");
                         });
                     await onButtonClick();
                 }
@@ -111,24 +122,6 @@ export default function AssetForm({ onButtonClick, passedData }) {
 
         onSubmit();
     }, [isSubmitClicked]);
-
-    // useEffect(() => {
-    //     const investmentTypeChange = async () => {
-    //         if (isFixedIncomeVisible) {
-    //             alert("Fixed income");
-    //         }
-    //     };
-
-    //     investmentTypeChange();
-    // }, [isFixedIncomeVisible]);
-
-    const convertUtcToYYYYMMDD = (utcDate) => {
-        const dateObject = new Date(utcDate);
-        const year = dateObject.getUTCFullYear();
-        const month = `0${dateObject.getUTCMonth() + 1}`.slice(-2);
-        const day = `0${dateObject.getUTCDate()}`.slice(-2);
-        return `${year}-${month}-${day}`;
-    };
 
 
     const fetchUsers = async () => {
@@ -222,15 +215,7 @@ export default function AssetForm({ onButtonClick, passedData }) {
         if (investmentId == "") {
             setInvestmentId(0);
         }
-        // if(startDate===null || startDate===""){
-        //     setStartDate('');
-        // }
-        // if(maturityDate===null || maturityDate===""){
-        //     setMaturityDate('');
-        // }
-        // if(asOfDate===null || asOfDate===""){
-        //     setAsOfDate('');
-        // }
+
         setPostData({
             "AssetDetailId": investmentId,
             "InvestmentEntity": investmentEntity,

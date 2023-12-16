@@ -140,7 +140,7 @@ export default function AssetDetails() {
                 columns={columns}
                 data={filter}
                 pagination
-                selectableRows
+                // selectableRows
                 fixedHeader
                 selectableRowsHighlight
                 highlightOnHover
