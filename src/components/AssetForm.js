@@ -9,7 +9,7 @@ export default function AssetForm({ onButtonClick, passedData }) {
     const [investmentEntity, setInvestmentEntityValue] = useState('');
     const [investmentType, setinvestmentTypeValue] = useState('');
     const [amount, setAmountValue] = useState('');
-    const [interestRate, setInterestRate] = useState('');
+    const [interestRate, setInterestRate] = useState(null);
     const [interestFrequency, setInterestFrequency] = useState('');
     const [userId, setUserId] = useState('');
     const [startDate, setStartDate] = useState(null);
@@ -64,13 +64,18 @@ export default function AssetForm({ onButtonClick, passedData }) {
             setInvestmentEntityValue(passedData.investmentEntity);
             setinvestmentTypeValue(passedData.investmentTypeId);
             setAmountValue(passedData.amount);
-            setInterestRate(passedData.interestRate);
+            if (passedData.interestRate == null) {
+                setInterestRate('');
+            }
+            else {
+                setInterestRate(passedData.interestRate);
+            }
             setInterestFrequency(passedData.interestFrequency);
             setUserId(passedData.userId);
             if (passedData.assetClassId == 2) { //fixed income
                 setIsFixedIncomeVisible(true);
             }
-            else{
+            else {
                 setIsFixedIncomeVisible(false);
             }
             if (passedData.startDate != null) {
@@ -106,7 +111,7 @@ export default function AssetForm({ onButtonClick, passedData }) {
                     await axios.post("http://localhost:5226/api/General/AddUpdateAssetDetails", postData)
                         .then(response => {
                             console.log(response.data);
-                            if(response.data!=null){
+                            if (response.data != null) {
                                 alert("Sucess");
                             }
                         })
@@ -212,16 +217,16 @@ export default function AssetForm({ onButtonClick, passedData }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (investmentId == "") {
-            setInvestmentId(0);
-        }
+        // if (investmentId == "") {
+        //     setInvestmentId(0);
+        // }
 
         setPostData({
-            "AssetDetailId": investmentId,
+            "AssetDetailId": investmentId == "" ? 0 : investmentId,
             "InvestmentEntity": investmentEntity,
             "InvestmentTypeId": investmentType,
             "Amount": amount,
-            "InterestRate": interestRate,
+            "InterestRate": interestRate == "" ? null : interestRate,
             "InterestFrequency": interestFrequency,
             "UserId": userId,
             "StartDate": startDate == '' ? null : startDate,
@@ -259,15 +264,17 @@ export default function AssetForm({ onButtonClick, passedData }) {
                 <input type="number" name="Amount" value={amount} onChange={handleAmount} />
             </label>
             <br />
-            <label>
-                Interest Rate :
-                <input type="number" name="InterestRate" value={interestRate} onChange={handleInterestRate} />
-            </label>
+            {isFixedIncomeVisible &&
+                <label>
+                    Interest Rate :
+                    <input type="number" name="InterestRate" value={interestRate} onChange={handleInterestRate} />
+                </label>}
             <br />
-            <label>
-                Interest Frequency :
-                <input type="text" name="InterestFrequency" value={interestFrequency} onChange={handleInterestFrequency} />
-            </label>
+            {isFixedIncomeVisible &&
+                <label>
+                    Interest Frequency :
+                    <input type="text" name="InterestFrequency" value={interestFrequency} onChange={handleInterestFrequency} />
+                </label>}
             <br />
             <label>
                 User Id :
