@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import AssetForm from "../components/AssetForm";
 import axios from "axios";
+import { Bars } from "react-loader-spinner";
 
 export default function AssetDetails() {
     const columns = [
@@ -47,8 +48,8 @@ export default function AssetDetails() {
     const [search, SetSearch] = useState('');
     const [filter, setFilter] = useState([]);
     const [asset, setAssetData] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
-    
 
     useEffect(() => {
         const onLoad = async () => {
@@ -60,8 +61,10 @@ export default function AssetDetails() {
 
     const getProduct = async () => {
         try {
+            setIsLoading(true);
             const response = await axios.get("http://localhost:5226/api/General/GetAssetDetails");
             setFilter(response.data);
+            setIsLoading(false);
         } catch (error) {
             console.log(error);
         }
@@ -90,11 +93,13 @@ export default function AssetDetails() {
 
     const fetchAsset = async (assetId) => {
         try {
+            setIsLoading(true);
             const response = await axios.get("http://localhost:5226/api/General/GetAssetDetailById", {
                 params: {
                     assetDetailId: assetId
                 }
             });
+            setIsLoading(false);
             //setAssetData(response.data);
             return response.data;
         }
@@ -134,6 +139,13 @@ export default function AssetDetails() {
         <React.Fragment>
             <h1>Asset List</h1>
 
+            {isLoading ? (<div style={{width:"100%",height:"100%",display:"flex",justifyContent:"center",alignItems:"center"}}>
+                <Bars
+                height="80"
+                width="80"
+                color="#4fa94d"
+            /></div>) : ""}
+            
             <AssetForm onButtonClick={handleButtonClick} passedData={asset}></AssetForm>
             <DataTable
                 customStyles={tableHeaderstyle}
