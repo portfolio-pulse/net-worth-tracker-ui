@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Bars } from "react-loader-spinner";
 
 export default function AssetForm({ onButtonClick, passedData }) {
 
@@ -20,6 +21,7 @@ export default function AssetForm({ onButtonClick, passedData }) {
     const [usersData, setUsersData] = useState([]);
     const [isSubmitClicked, setSubmitClicked] = useState(false);
 
+    const [isLoading, setIsLoading] = useState(false);
     const [isFixedIncomeVisible, setIsFixedIncomeVisible] = useState(true);
     const [dictionary, setDictionary] = useState({});
     const addDictionary = (investmentTypeId, assetClassId) => {
@@ -62,7 +64,7 @@ export default function AssetForm({ onButtonClick, passedData }) {
             console.log("Assets passed from parent: ", passedData);
             setInvestmentId(passedData.assetDetailId);
             setInvestmentEntityValue(passedData.investmentEntity);
-            setinvestmentTypeValue(passedData.investmentTypeId);
+            setinvestmentTypeValue(passedData.investmentType.investmentTypeId);
             setAmountValue(passedData.amount);
             if (passedData.interestRate == null) {
                 setInterestRate('');
@@ -72,7 +74,7 @@ export default function AssetForm({ onButtonClick, passedData }) {
             }
             setInterestFrequency(passedData.interestFrequency);
             setUserId(passedData.userId);
-            if (passedData.assetClassId == 2) { //fixed income
+            if (passedData.investmentType.investmentAssetClass.assetClassId == 2) { //fixed income
                 setIsFixedIncomeVisible(true);
             }
             else {
@@ -107,6 +109,7 @@ export default function AssetForm({ onButtonClick, passedData }) {
     useEffect(() => {
         const onSubmit = async () => {
             if (isSubmitClicked) {
+                setIsLoading(true);
                 if (postData.UserId != "") {
                     await axios.post("http://localhost:5226/api/General/AddUpdateAssetDetails", postData)
                         .then(response => {
@@ -122,6 +125,7 @@ export default function AssetForm({ onButtonClick, passedData }) {
                     await onButtonClick();
                 }
                 setSubmitClicked(false);
+                setIsLoading(false);
             }
         };
 
@@ -207,8 +211,8 @@ export default function AssetForm({ onButtonClick, passedData }) {
         setInterestRate('');
         setInterestFrequency('');
         setUserId(0);
-        setStartDate(null);
-        setMaturityDate(null);
+        setStartDate(defaultDate);
+        setMaturityDate(defaultDate);
         setAsOfDate(defaultDate);
         setRemarks('');
     };
@@ -315,6 +319,12 @@ export default function AssetForm({ onButtonClick, passedData }) {
 
             <button type="submit">Save</button>
             <button onClick={clear}>Clear</button>
+            {isLoading ? (<div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <Bars
+                    height="80"
+                    width="80"
+                    color="#4fa94d"
+                /></div>) : ""}
         </form>
     );
 };

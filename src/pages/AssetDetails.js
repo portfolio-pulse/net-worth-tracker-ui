@@ -10,21 +10,29 @@ export default function AssetDetails() {
             name: "Select",
             cell: (row) => (
                 <button className="btn btn-danger" onClick={() => handleSelect(row.assetDetailId)}>Select</button>
-            )
+            ),
+            width: '90px'
         },
         {
             name: "Delete",
             cell: (row) => (
                 <button className="btn btn-danger" onClick={() => handleDelete(row.assetDetailId)}>Delete</button>
-            )
+            ),
+            width: '90px'
         },
-        {
-            name: "Asset Id",
-            selector: (row) => row.assetDetailId,
-        },
+        // {
+        //     name: "Asset Id",
+        //     selector: (row) => row.assetDetailId,
+        //     width: '80px',
+        //     omit:true,
+        // },
         {
             name: "Investment Entity",
             selector: (row) => row.investmentEntity,
+        },
+        {
+            name: "Type",
+            selector: (row) => row.investmentType.name,
         },
         {
             name: "Amount",
@@ -35,15 +43,29 @@ export default function AssetDetails() {
             selector: (row) => row.interestRate,
         },
         {
-            name: "Interest Frequency",
-            selector: (row) => row.interestFrequency,
+            name: "Start Date",
+            selector: (row) => row.startDate==null?"":row.startDate.toString().split("T")[0],
         },
         {
-            name: "Remarks",
-            selector: (row) => row.remarks,
+            name: "Maturity Date",
+            selector: (row) => row.maturityDate==null?"":row.maturityDate.toString().split("T")[0],
+        },
+        {
+            name: "As Of Date",
+            selector: (row) => row.asOfDate==null?"":row.asOfDate.toString().split("T")[0],
         }
 
     ];
+
+    // const conditionalRowStyles = [
+    //     {
+    //         when: (row) => row.assetDetailId,
+    //         style: {
+    //             display: 'none',
+    //         },
+    //     },
+    // ];
+
     //const [data, setData] = useState([]);
     const [search, SetSearch] = useState('');
     const [filter, setFilter] = useState([]);
@@ -139,18 +161,19 @@ export default function AssetDetails() {
         <React.Fragment>
             <h1>Asset List</h1>
 
-            {isLoading ? (<div style={{width:"100%",height:"100%",display:"flex",justifyContent:"center",alignItems:"center"}}>
+            {isLoading ? (<div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <Bars
-                height="80"
-                width="80"
-                color="#4fa94d"
-            /></div>) : ""}
-            
+                    height="80"
+                    width="80"
+                    color="#4fa94d"
+                /></div>) : ""}
+
             <AssetForm onButtonClick={handleButtonClick} passedData={asset}></AssetForm>
             <DataTable
                 customStyles={tableHeaderstyle}
                 columns={columns}
                 data={filter}
+                //conditionalRowStyles={conditionalRowStyles}
                 pagination
                 // selectableRows
                 fixedHeader
