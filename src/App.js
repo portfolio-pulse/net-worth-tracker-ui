@@ -12,8 +12,9 @@ import AssetDetails from './pages/AssetDetails';
 function App() {
   return (
     <Router>
-      <div>
-        <Navbar></Navbar>
+      <Navbar></Navbar>
+      <div style={{marginLeft:'250px',padding:'20px'}}>
+        
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/assets' element={<AssetDetails />} />

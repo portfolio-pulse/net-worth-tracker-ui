@@ -1,0 +1,26 @@
+/* Styling for the vertical sidebar */
+.sidenav {
+    height: 100%; /* Full-height: will cover the entire screen */
+    width: 250px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place while scrolling) */
+    top: 0;
+    left: 0;
+    background-color: #111; /* Black background color */
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sidenav a {
+    padding: 15px 20px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #fff; /* White text color */
+    display: block; /* Make links appear below each other */
+  }
+  
+  .sidenav a:hover {
+    background-color: #575757; /* Darker background color on hover */
+    color: #f1f1f1; /* Lighter text on hover */
+  }
+  
