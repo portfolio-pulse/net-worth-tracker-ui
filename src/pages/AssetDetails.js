@@ -4,6 +4,7 @@ import AssetForm from "../components/AssetForm";
 import { Bars } from "react-loader-spinner";
 import { DataGrid } from "@mui/x-data-grid";
 import { Box } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 
 const AssetDetails = () => {
@@ -24,15 +25,27 @@ const AssetDetails = () => {
 
 
     const [data, setData] = useState([]);
-
-    const [page,setPageSize]=useState([25]);
+    const [page, setPageSize] = useState([25]);
+    const navigate = useNavigate(); 
 
     useEffect(() => {
+        console.log("Bearer Token: ", localStorage.getItem("loginToken"));
         const fetchData = async () => {
             try {
-                const response = await fetch('https://networthtrackerapi20240213185304.azurewebsites.net/api/General/getAssetDetails');
-                const result = await response.json();
-                setData(result);
+                const response = await fetch('https://networthtrackerapi20240213185304.azurewebsites.net/api/General/getAssetDetails', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem("loginToken")}`
+                    }
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    setData(result);
+                }
+                else if(response.status===401){
+                    navigate('/login'); 
+                }
             }
             catch (error) {
                 console.log("Error fetching data: ", error);
@@ -45,7 +58,7 @@ const AssetDetails = () => {
         <div>
             <Box sx={{ height: 400, width: '100%' }}>
                 <h1>Asset Report</h1>
-                <DataGrid rows={data} columns={columns} pageSize={page} onPageSizeChange={(newPageSize) => setPageSize(newPageSize)} rowsPerPageOptions={[5,10,25,50]} />
+                <DataGrid rows={data} columns={columns} pageSize={page} onPageSizeChange={(newPageSize) => setPageSize(newPageSize)} rowsPerPageOptions={[5, 10, 25, 50]} />
             </Box>
         </div>
     );

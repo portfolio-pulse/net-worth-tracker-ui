@@ -6,10 +6,10 @@ import '../styles/navbar.css'
 export default function Navbar() {
     return (
         <div className="sidenav">
-          <Link to="/">Dashboard</Link>
-          <Link to="/">Income Report</Link>
+          <Link to="/home">Dashboard</Link>
+          <Link to="/home">Income Report</Link>
           <Link to="/assets">Asset Report</Link>
-          <Link to="/">Settings</Link>
+          <Link to="/home">Settings</Link>
         </div>
       );
 }

@@ -12,10 +12,10 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('https://networthtrackerapi20240213185304.azurewebsites.net/api/General/getAssetDetails', {
-                method: 'POST',
+            const response = await fetch(`https://networthtrackerapi20240213185304.azurewebsites.net/api/Auth/getToken?email=${encodeURIComponent(userName)}&password=${encodeURIComponent(password)}`, {
+                method: 'GET',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userName, password }), // Send credentials as JSON
+                //body: JSON.stringify({ userName, password }), // Send credentials as JSON
             });
 
             if (response.ok) {
@@ -26,6 +26,7 @@ const Login = () => {
                 localStorage.setItem('loginToken', result.token); // Save token to localStorage if required
                 navigate('/dashboard'); // Redirect to dashboard after successful login
             } else {
+                localStorage.removeItem('loginToken');
                 setErrorMessage('Invalid username or password');
             }
         }
