@@ -5,6 +5,7 @@ import '../styles/navbar.css'
 
 export default function Navbar() {
     return (
+      //test
         <div className="sidenav">
           <Link to="/home">Dashboard</Link>
           <Link to="/home">Income Report</Link>
