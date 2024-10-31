@@ -1,26 +1,67 @@
-/* Styling for the vertical sidebar */
+/* Default styling for the sidebar */
 .sidenav {
-    height: 100%; /* Full-height: will cover the entire screen */
-    width: 250px; /* Set the width of the sidebar */
-    position: fixed; /* Fixed Sidebar (stay in place while scrolling) */
-    top: 0;
-    left: 0;
-    background-color: #111; /* Black background color */
-    padding-top: 20px;
-    display: flex;
-    flex-direction: column;
+  height: 100%;
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s; /* Smooth transition when opening/closing */
+}
+
+.sidenav a {
+  padding: 15px 20px;
+  text-decoration: none;
+  font-size: 18px;
+  color: #fff;
+  display: block;
+}
+
+.sidenav a:hover {
+  background-color: #575757;
+  color: #f1f1f1;
+}
+
+/* Styling for the toggle button */
+.toggle-btn {
+  font-size: 30px;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background-color: transparent;
+  border: none;
+  color: black;
+  cursor: pointer;
+  display: none; /* Hidden by default */
+}
+
+/* Hide sidebar and show toggle button on smaller screens */
+@media screen and (max-width: 768px) {
+  .sidenav {
+    width: 0; /* Sidebar starts hidden on mobile */
+    overflow: hidden;
   }
-  
-  .sidenav a {
-    padding: 15px 20px;
-    text-decoration: none;
-    font-size: 18px;
-    color: #fff; /* White text color */
-    display: block; /* Make links appear below each other */
+
+  .sidenav.active {
+    width: 250px; /* Sidebar opens when toggled */
   }
-  
-  .sidenav a:hover {
-    background-color: #575757; /* Darker background color on hover */
-    color: #f1f1f1; /* Lighter text on hover */
+
+  .toggle-btn {
+    display: block; /* Show toggle button on small screens */
   }
-  
+}
+
+/* Show the sidebar by default on larger screens */
+@media screen and (min-width: 769px) {
+  .sidenav {
+    width: 250px; 
+  }
+
+  /* Hide the toggle button on larger screens */
+  .toggle-btn {
+    display: none; /* Hide on desktop */
+  }
+}
