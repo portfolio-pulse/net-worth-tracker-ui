@@ -1,4 +1,5 @@
 import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
 import {
   BrowserRouter as Router,
@@ -10,19 +11,27 @@ import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import AssetDetails from './pages/AssetDetails';
+import SideNavBar from './components/Sidebar';
 
 function AppContent() {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login' || location.pathname === '/';
+  const [isSidebarVisible, setSidebarVisible] = useState(true);
   return (
-    <>
-      {!isLoginPage && <Navbar />}
-      <div style={{
-        marginLeft: !isLoginPage ? '250px' : '0', // No margin for login page
-        padding: '20px',
-        transition: 'margin 0.3s ease' // Smooth transition when navigating between pages
-      }}>
+    <div style={{ display: "flex" }}>
+      {!isLoginPage && (<SideNavBar
+        isVisible={isSidebarVisible}
+        toggleSidebar={() => setSidebarVisible(!isSidebarVisible)}
+      />)}
 
+      <div
+        style={{
+          marginLeft: !isLoginPage && isSidebarVisible ? 240 : (isLoginPage ? 0 : 64), // Adjust content based on sidebar
+          transition: "margin-left 0.3s",
+          width: "100%",
+          padding: "20px",
+        }}
+      >
         <Routes>
           <Route path='/' element={<Login />} />
           <Route path='/login' element={<Login />} />
@@ -30,7 +39,8 @@ function AppContent() {
           <Route path='/assets' element={<AssetDetails />} />
         </Routes>
       </div>
-    </>
+    </div>
+
   );
 }
 
