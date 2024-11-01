@@ -38,6 +38,15 @@ function SideNavBar({ isVisible, toggleSidebar }) {
             </NavIcon>
             <NavText>Assets</NavText>
           </NavItem>
+          <NavItem eventKey="logout">
+            <NavIcon>
+              <i
+                className="fa-solid fa-right-from-bracket"
+                style={{ fontSize: "1.75em" }}
+              />
+            </NavIcon>
+            <NavText>Logout</NavText>
+          </NavItem>
         </SideNav.Nav>
       </SideNav>
     );
