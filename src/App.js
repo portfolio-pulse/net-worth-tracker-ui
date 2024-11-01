@@ -15,7 +15,7 @@ import SideNavBar from './components/Sidebar';
 
 function AppContent() {
   const location = useLocation();
-  const isLoginPage = location.pathname === '/login' || location.pathname === '/';
+  const isLoginPage = location.pathname === '/login' || location.pathname === '/' || location.pathname === '/logout';
   const [isSidebarVisible, setSidebarVisible] = useState(true);
   return (
     <div style={{ display: "flex" }}>
@@ -37,6 +37,7 @@ function AppContent() {
           <Route path='/login' element={<Login />} />
           <Route path='/home' element={<Home />} />
           <Route path='/assets' element={<AssetDetails />} />
+          <Route path='/logout' element={<Login />} />
         </Routes>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button, Box, Typography } from "@mui/material";
 
@@ -8,6 +8,10 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate(); // Hook to navigate between routes
+
+    useEffect(() => {
+        localStorage.removeItem('loginToken');
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,7 +28,7 @@ const Login = () => {
 
                 // Assuming a token or some success indicator is returned
                 localStorage.setItem('loginToken', result.token); // Save token to localStorage if required
-                navigate('/dashboard'); // Redirect to dashboard after successful login
+                navigate('/home'); // Redirect to dashboard after successful login
             } else {
                 localStorage.removeItem('loginToken');
                 setErrorMessage('Invalid username or password');
