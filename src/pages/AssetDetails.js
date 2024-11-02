@@ -27,10 +27,12 @@ const AssetDetails = () => {
     const [data, setData] = useState([]);
     const [page, setPageSize] = useState([25]);
     const navigate = useNavigate(); 
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         console.log("Bearer Token: ", localStorage.getItem("loginToken"));
         const fetchData = async () => {
+            setLoading(true);
             try {
                 const response = await fetch('https://networthtrackerapi20240213185304.azurewebsites.net/api/General/getAssetDetails', {
                     method: 'GET',
@@ -50,6 +52,9 @@ const AssetDetails = () => {
             catch (error) {
                 console.log("Error fetching data: ", error);
             }
+            finally{
+                setLoading(false);
+            }
         };
         fetchData();
     }, []);
@@ -58,7 +63,25 @@ const AssetDetails = () => {
         <div>
             <Box sx={{ height: 400, width: '100%' }}>
                 <h1>Asset Report</h1>
-                <DataGrid rows={data} columns={columns} pageSize={page} onPageSizeChange={(newPageSize) => setPageSize(newPageSize)} rowsPerPageOptions={[5, 10, 25, 50]} />
+                {loading ? (
+                <Bars height="50" width="50" color="#4fa94d" ariaLabel="loading" />
+            ) : (
+                <Box sx={{ height: 500, maxWidth: '100%', overflowX: 'auto' }}> {/* Set maxWidth to fit the screen */}
+                    <DataGrid
+                        rows={data}
+                        columns={columns}
+                        pageSize={10}
+                        rowsPerPageOptions={[5, 10, 25, 50]}
+                        pagination
+                        sx={{
+                            minWidth: '600px',  // Minimum width to ensure horizontal scrollability
+                            '& .MuiDataGrid-columnHeaders': {
+                                backgroundColor: '#f5f5f5',
+                            },
+                        }}
+                    />
+                </Box>
+            )}
             </Box>
         </div>
     );
