@@ -18,7 +18,16 @@ function SideNavBar({ isVisible, toggleSidebar }) {
     
     return (
       
-      <SideNav onSelect={(selected)=>{navigate('/'+selected)}} expanded={isVisible}>
+      <SideNav onSelect={(selected)=>{navigate('/'+selected)}} expanded={isVisible}
+      style={{
+        position: 'fixed', // Keeps the navbar fixed
+        top: 0,
+        bottom: 0,
+        left: 0,
+        zIndex: 1000, // Ensures it’s above other content
+        overflowY: 'auto', // Optional: adds scrolling within the navbar if content is too long
+      }}
+      >
        <SideNav.Toggle
         onClick={toggleSidebar} // Toggle visibility on click
       />
