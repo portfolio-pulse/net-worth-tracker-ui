@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { PieChart, Pie, Legend, Tooltip, BarChart, Bar, CartesianGrid, XAxis, YAxis } from "recharts";
 
 const data01 = [
@@ -50,9 +51,35 @@ const data = [
 
 
 export default function Home() {
+    const navigate = useNavigate();
+    const handleRefreshDatabase = async () => {
+        try {
+            const response = await fetch('https://networthtrackerapi20240213185304.azurewebsites.net/api/Auth/reloadDatabase', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem("loginToken")}`
+                }
+            });
+            if (response.ok) {
+                //const result = await response.json();
+                console.log("Response: "+response);
+                alert("Database Refresh Success");
+                //setData(result);
+            }
+            else if (response.status === 401) {
+                navigate('/login');
+            }
+        }
+        catch (error) {
+            console.log("Error fetching data: ", error);
+        }
+    }
+
     return (
         <>
             {/* <p>This is Home page.</p> */}
+            <button onClick={handleRefreshDatabase}>Refresh Database</button>
             <PieChart width={1000} height={400}>
                 <Pie
                     dataKey="value"
