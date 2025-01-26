@@ -12,6 +12,7 @@ import Login from './pages/Login';
 import Home from './pages/Home';
 import AssetDetails from './pages/AssetDetails';
 import SideNavBar from './components/Sidebar';
+import AssetAuditLog from './pages/AssetAuditLog';
 
 function AppContent() {
   const location = useLocation();
@@ -37,6 +38,7 @@ function AppContent() {
           <Route path='/login' element={<Login />} />
           <Route path='/home' element={<Home />} />
           <Route path='/assets' element={<AssetDetails />} />
+          <Route path='/assetAuditLog' element={<AssetAuditLog />} />
           <Route path='/logout' element={<Login />} />
         </Routes>
       </div>

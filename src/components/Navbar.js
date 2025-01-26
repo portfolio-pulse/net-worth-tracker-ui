@@ -71,6 +71,7 @@ export default function Navbar() {
         <Link to="/home">Dashboard</Link>
         <Link to="/home">Income Report</Link>
         <Link to="/assets">Asset Report</Link>
+        <Link to="/assetAuditLog">Asset Audit Log</Link>
         <Link to="/home">Settings</Link>
       </div>
 

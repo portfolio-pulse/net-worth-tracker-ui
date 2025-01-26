@@ -47,6 +47,15 @@ function SideNavBar({ isVisible, toggleSidebar }) {
             </NavIcon>
             <NavText>Assets</NavText>
           </NavItem>
+          <NavItem eventKey="assetAuditLog">
+            <NavIcon>
+              <i
+                className="fa fa-fw fa-line-chart"
+                style={{ fontSize: "1.75em" }}
+              />
+            </NavIcon>
+            <NavText>Asset Audit Log</NavText>
+          </NavItem>
           <NavItem eventKey="logout">
             <NavIcon>
               <i
