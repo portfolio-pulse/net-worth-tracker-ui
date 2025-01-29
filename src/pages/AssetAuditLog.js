@@ -10,17 +10,15 @@ import { useNavigate } from "react-router-dom";
 const AssetAuditLog = () => {
 
     const columns = [
-        { field: 'id', headerName: 'AssetId', width: 100 },
+        { field: 'assetLogId', headerName: 'AssetId', width: 100 },
+        { field: 'liquidAssetValue', headerName: 'LiquidAssetValue', width: 100 },
+        { field: 'nonMovableAssetValue', headerName: 'NonMovableAssetValue', width: 100 },
+        { field: 'netAssetValue', headerName: 'NetAssetValue', width: 100 },
+        { field: 'createdDate', headerName: 'CreatedDate', width: 100 },
+        { field: 'assetId', headerName: 'AssetId', width: 100 },
         { field: 'investmentEntity', headerName: 'InvestmentEntity', width: 100 },
-        { field: 'investmentType', headerName: 'Type', width: 100 },
+        { field: 'type', headerName: 'Type', width: 100 },
         { field: 'amount', headerName: 'Amount', width: 100 },
-        { field: 'interestRate', headerName: 'InterestRate', width: 100 },
-        { field: 'interestFrequency', headerName: 'InterestFrequency', width: 100 },
-        { field: 'userId', headerName: 'UserId', width: 100 },
-        { field: 'startDate', headerName: 'StartDate', width: 100 },
-        { field: 'maturityDate', headerName: 'MaturityDate', width: 100 },
-        { field: 'asOfDate', headerName: 'AsOfDate', width: 100 },
-        { field: 'remarks', headerName: 'Remarks', width: 100 },
     ];
 
 
@@ -34,7 +32,7 @@ const AssetAuditLog = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                const response = await fetch('https://networthtrackerapi20240213185304.azurewebsites.net/api/General/getAssetDetails', {
+                const response = await fetch('https://networthtrackerapi20240213185304.azurewebsites.net/api/General/getAssetAuditLog', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -62,7 +60,7 @@ const AssetAuditLog = () => {
     return (
         <div>
             <Box sx={{ height: 400, width: '100%' }}>
-                <h1>Asset Report</h1>
+                <h1>Asset Audit Log</h1>
                 {loading ? (
                 <Bars height="50" width="50" color="#4fa94d" ariaLabel="loading" />
             ) : (
