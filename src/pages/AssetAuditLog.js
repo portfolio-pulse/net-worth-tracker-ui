@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 const AssetAuditLog = () => {
 
     const columns = [
-        { field: 'assetLogId', headerName: 'AssetId', width: 100 },
+        { field: 'assetLogId', headerName: 'AssetLogId', width: 100 },
         { field: 'liquidAssetValue', headerName: 'LiquidAssetValue', width: 100 },
         { field: 'nonMovableAssetValue', headerName: 'NonMovableAssetValue', width: 100 },
         { field: 'netAssetValue', headerName: 'NetAssetValue', width: 100 },
@@ -68,6 +68,7 @@ const AssetAuditLog = () => {
                     <DataGrid
                         rows={data}
                         columns={columns}
+                        getRowId={(row) => row.assetLogId}
                         pageSize={10}
                         rowsPerPageOptions={[5, 10, 25, 50]}
                         pagination
